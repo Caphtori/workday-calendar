@@ -37,6 +37,7 @@ $(function () {
 function renderSchedule(){
   for (let i=0; i<dayLength; i++){
     let now = dayjs();
+    now = dayjs().hour(13).minute(0).second(0);
     let hour = dayStart.add(i, "hour");
     let hourLabel = hour.format('hA');
 
@@ -65,14 +66,23 @@ function renderSchedule(){
     textarea.addClass("col-8 col-md-10 description");
     textarea.attr("rows", "3")
     
-    button.addClass("btn saveBtn col-2 col-md-1");
-    button.attr("aria-label", "save")
+    if (hour.isBefore(now, "hour")){
+      button.addClass("btn noBtn col-2 col-md-1");
+    } else {
+      button.addClass("btn addBtn col-2 col-md-1");
+      button.attr("aria-label", "plus")
+    }
     
-    idiom.addClass("fas fa-save");
+    // button.attr("aria-label", "save")
+    
+    // idiom.addClass("fas fa-save");
+    
+    idiom.addClass("fas fa-plus ariaEl");
     idiom.attr("aria-hidden", "true");
     
-
-    button.append(idiom);
+    if (hour.isAfter(now, "hour")||hour.isSame(now, "hour")){
+      button.append(idiom);
+    }
     hourDiv.append(titleDiv);
     hourDiv.append(textarea);
     hourDiv.append(button);
