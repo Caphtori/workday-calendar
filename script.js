@@ -41,7 +41,7 @@ function renderSchedule(){
     let now = dayjs();
 
     // FOR TESTING PURPOSES ONLY
-    now = dayjs().hour(13).minute(0).second(0);
+    // now = dayjs().hour(13).minute(0).second(0);
     // 
 
 
@@ -159,14 +159,24 @@ function renderSchedule(){
             index: hourObject.todos.length,
             isDone: false,
             isFail: false,
-            title: () => {
-              let words = [];
-              let word1 = [];
-              let word3 = [];
-              this.txt.each(()=>{
-                let spaceCount = 0;
-                
-              })
+            title: function() {
+              if (this.txt.length>20){
+                let word = '';
+                for (let i=0; i<20; i++){
+                  word+=this.txt[i];
+                }
+                return word.trimEnd()+"..."
+                // return this.txt.from(0, 19, 1).trimEnd()+"...";
+              } else {
+                return this.txt.trimEnd();
+            }
+            // title: () => {
+            //   console.log(this.txt)
+            //   if (this.txt.length>20){
+            //     return this.txt.from(0, 19, 1).trimEnd()+"...";
+            //   } else {
+            //     return this.txt.trimEnd();
+            //   }
             }
           };
   
