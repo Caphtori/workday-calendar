@@ -35,6 +35,14 @@ textarea {
   color: white;
 }
 
+.past textarea:hover{
+  cursor: default;
+}
+
+.past textarea:focus{
+  outline: none;
+}
+
 .present {
   background-color: #ff6961;
   color: white;
@@ -43,6 +51,11 @@ textarea {
 .future {
   background-color: #77dd77;
   color: white;
+}
+
+.writable {
+  background-color: white;
+  color: black;
 }
 
 .saveBtn {
@@ -78,4 +91,12 @@ textarea {
   border-bottom-right-radius: 15px;
   background-color: #ff6961;
   color: white;
+}
+
+.noBtn:hover {
+  cursor: inherit;
+}
+
+.noBtn:focus {
+  box-shadow: inherit;
 }

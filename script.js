@@ -1,6 +1,7 @@
 let containerEl = $("#container");
 
 let todoMaster = [];
+// let today = dayjs();
 
 let dayStart = dayjs().hour(9).minute(0).second(0);
 let dayEnd = dayjs().hour(17).minute(0).second(0);
@@ -37,12 +38,19 @@ $(function () {
 function renderSchedule(){
   for (let i=0; i<dayLength; i++){
     let now = dayjs();
+
+    // FOR TESTING PURPOSES ONLY
     now = dayjs().hour(13).minute(0).second(0);
+    // 
+
+
     let hour = dayStart.add(i, "hour");
     let hourLabel = hour.format('hA');
 
     let hourObject = {
       hour: hour,
+      day: now,
+      // index: todoMaster.length,
       todos: [],
     };
 
@@ -52,13 +60,45 @@ function renderSchedule(){
     let button = $("<button>");
     let idiom = $("<i>");
 
+    // Checks the hour every minute to make sure the schedule is correct.
+    function checkHourInt(){
+      setInterval(checkHour, 60000)
+    };
+
+    function checkHour(){
+      if (hour.isBefore(now, "hour")){
+        hourDiv.attr("class", "row time-block past");
+      } else if (hour.isAfter(now, "hour")){
+        hourDiv.attr("class", "row time-block future");
+      } else{
+        hourDiv.attr("class", "row time-block present");
+      };
+    };
+
+    // function renderTodos(){
+
+    // }
+
+
     if (hour.isBefore(now, "hour")){
       hourDiv.addClass("row time-block past");
-    } else if (hour.isAfter(now, "hour")){
-      hourDiv.addClass("row time-block future");
+      button.addClass("btn noBtn col-2 col-md-1");
+      // textarea.readOnly=true;
+      // textarea.attr("readonly", true)
     } else{
-      hourDiv.addClass("row time-block present");
+      if (hour.isAfter(now, "hour")){
+        hourDiv.addClass("row time-block future");
+      } else {
+        hourDiv.addClass("row time-block present");
+        
+      }
+      button.addClass("btn addBtn col-2 col-md-1");
+      button.attr("aria-label", "plus")
     };
+
+    checkHourInt();
+
+    textarea.attr("readonly", true);
 
     titleDiv.addClass("col-2 col-md-1 hour text-center py-3");
     titleDiv.text(hourLabel);
@@ -67,10 +107,9 @@ function renderSchedule(){
     textarea.attr("rows", "3")
     
     if (hour.isBefore(now, "hour")){
-      button.addClass("btn noBtn col-2 col-md-1");
+      
     } else {
-      button.addClass("btn addBtn col-2 col-md-1");
-      button.attr("aria-label", "plus")
+      
     }
     
     // button.attr("aria-label", "save")
@@ -87,13 +126,51 @@ function renderSchedule(){
     hourDiv.append(textarea);
     hourDiv.append(button);
     containerEl.append(hourDiv);
+    btnListen()
 
-    // button.addEventListener("click", (event)=>{
-    //   element = event.taget;
-
-    // });
-  }
-};
+    function btnListen(){
+      button.one("click", function () {
+        // element = event.taget;
+  
+  
+        button.addClass("saveBtn").removeClass("addBtn");
+        button.attr("aria-label", "save")
+        idiom.addClass("fa-save").removeClass("fa-plus");
+        textarea.html('');
+        textarea.attr("readonly", false);
+        // console.log(textarea.readonly)
+  
+        button.one("click", function () {
+          let storedTodos = JSON.parse(localStorage.getItem("todoList"))
+          if (!storedTodos!==null){
+            hourObject.todos = storedTodos;
+          };
+          let todoObject = {
+            txt: textarea.value,
+            index: hourObject.todos.length,
+            isDone: false,
+            isFail: false,
+          };
+  
+          button.addClass("addBtn").removeClass('saveBtn');
+          button.attr("aria-label", "plus");
+          idiom.addClass("fa-plus").removeClass('fa-save');
+          textarea.val('');
+          textarea.attr("readonly", true);
+          
+          
+          hourObject.todos.push(todoObject);
+          localStorage.setItem("todoList", JSON.stringify(todos))
+          if (!todoMaster.includes(hourObject)){
+            todoMaster.push(hourObject);
+          };
+          btnListen();
+        });
+      });
+    }
+  };
+    }
+    
 
 // function buttonClick(event, )
 
