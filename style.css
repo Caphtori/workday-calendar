@@ -100,3 +100,23 @@ textarea {
 .noBtn:focus {
   box-shadow: inherit;
 }
+
+.fail{
+  color: #ff6961;
+}
+
+.success{
+  color: #77dd77;
+}
+
+.active:hover{
+  cursor: pointer;
+  color: yellow;
+}
+
+.todoLi{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 1rem;
+}
