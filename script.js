@@ -1,7 +1,8 @@
 let containerEl = $("#container");
 
 let todoMaster = [];
-// let today = dayjs();
+let today = dayjs();
+let pageDay = today;
 
 let dayStart = dayjs().hour(9).minute(0).second(0);
 let dayEnd = dayjs().hour(17).minute(0).second(0);
@@ -47,11 +48,17 @@ function renderSchedule(){
     let hour = dayStart.add(i, "hour");
     let hourLabel = hour.format('hA');
 
+    let storedTodos = JSON.parse(localStorage.getItem("todoList"))
+
     let hourObject = {
       hour: hour,
-      day: now,
+      day: pageDay,
       // index: todoMaster.length,
       todos: [],
+    };
+
+    if (storedTodos!==null){
+      hourObject.todos = storedTodos;
     };
 
     let hourDiv = $("<div>");
@@ -75,9 +82,9 @@ function renderSchedule(){
       };
     };
 
-    // function renderTodos(){
+    function renderTodos(){
 
-    // }
+    }
 
 
     if (hour.isBefore(now, "hour")){
@@ -138,18 +145,29 @@ function renderSchedule(){
         idiom.addClass("fa-save").removeClass("fa-plus");
         textarea.html('');
         textarea.attr("readonly", false);
-        // console.log(textarea.readonly)
+
+        if (hour.isAfter(now, "hour")){
+          hourDiv.removeClass("future");
+        } else if (hour.isSame(now, "hour")){
+          hourDiv.removeClass("present");
+        };
+        hourDiv.addClass("writable");
   
         button.one("click", function () {
-          let storedTodos = JSON.parse(localStorage.getItem("todoList"))
-          if (!storedTodos!==null){
-            hourObject.todos = storedTodos;
-          };
           let todoObject = {
-            txt: textarea.value,
+            txt: textarea.val(),
             index: hourObject.todos.length,
             isDone: false,
             isFail: false,
+            title: () => {
+              let words = [];
+              let word1 = [];
+              let word3 = [];
+              this.txt.each(()=>{
+                let spaceCount = 0;
+                
+              })
+            }
           };
   
           button.addClass("addBtn").removeClass('saveBtn');
@@ -157,13 +175,23 @@ function renderSchedule(){
           idiom.addClass("fa-plus").removeClass('fa-save');
           textarea.val('');
           textarea.attr("readonly", true);
+
+          hourDiv.removeClass("writable");
+          checkHour();
+          if (todoObject.txt!==''&&todoObject.txt!==undefined){
+            hourObject.todos.push(todoObject);
+            localStorage.setItem("todoList", JSON.stringify(hourObject.todos))
+            if (!todoMaster.includes(hourObject)){
+              let storedMasters = JSON.parse(localStorage.getItem("masterList"));
+              if (storedTodos!==null){
+                todoMaster = storedMasters;
+              };
+              todoMaster.push(hourObject);
+              localStorage.setItem("masterList", JSON.stringify(todoMaster));
+            };
+          }
           
-          
-          hourObject.todos.push(todoObject);
-          localStorage.setItem("todoList", JSON.stringify(todos))
-          if (!todoMaster.includes(hourObject)){
-            todoMaster.push(hourObject);
-          };
+
           btnListen();
         });
       });
