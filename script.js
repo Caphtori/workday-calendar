@@ -38,14 +38,20 @@ $(function () {
 
 function renderSchedule(){
   for (let i=0; i<dayLength; i++){
-    let now = dayjs();
+    renderHour(i);
+  };
+    }
+
+
+renderHour = function(iHour){
+  let now = dayjs();
 
     // FOR TESTING PURPOSES ONLY
     // now = dayjs().hour(13).minute(0).second(0);
     // 
 
 
-    let hour = dayStart.add(i, "hour");
+    let hour = dayStart.add(iHour, "hour");
     let hourLabel = hour.format('hA');
 
     let storedTodos = JSON.parse(localStorage.getItem("todoList"))
@@ -83,8 +89,85 @@ function renderSchedule(){
     };
 
     function renderTodos(){
+      let ul = $("<ul>");
+      hourObject.todos.each(renderSingle(this))
 
-    }
+      renderSingle = function(todo) {
+        let li = $("<li>");
+        let todoEnd = $("<i>");
+        let checkbox = $("<input>");
+        let title = $("<p>");
+        let changeBox = $("<div>");
+        let edit = $("<i>");
+        let trash = $("<i>");
+        
+        checkbox.addClass("form-check-input");
+        checkbox.attr("type", "checkbox");
+
+
+        
+        if (hour.isBefore(now, "hour")){
+          if (todo.isDone){
+            todoEnd.addClass("fa fa-check");
+            li.addClass("success");
+          } else {
+            todoEnd.addClass("fa fa-close");
+            li.addClass("fail");
+          };
+          // REMOVE EVENTLISTENERS
+          renderDone();
+        } else {
+          if (todo.isDone){
+            renderDone();
+          } else {
+            changeBox.append(edit);
+            changeBox.append(trash);
+            li.append(checkbox);
+            li.append(title);
+            li.append(changeBox);
+            ul.append(li);
+            textarea.append(ul);
+            
+            checkbox.one("change", checkBoxFn);
+          };
+          
+          
+          }
+
+          // if (todo.isDone){
+          //   if (hour.isBefore(now, "hour")){
+          //     li.addClass("success");
+          //   };
+          //   todoEnd.addClass("fa fa-check");
+          //   renderDone();
+          // } else {
+          //   changeBox.append(edit);
+          //   changeBox.append(trash);
+          //   li.append(checkbox);
+          //   li.append(title);
+          //   li.append(changeBox);
+          //   ul.append(li);
+          //   textarea.append(ul);
+            
+          //   checkbox.one("change", checkBoxFn)
+          // }
+          checkBoxFn = function(){
+            todo.isDone = true;
+            renderSingle(todo);
+          }
+
+
+          renderDone = function(){
+            checkbox.off("change", checkBoxFn);
+            li.append(todoEnd);
+            li.append(title);
+            ul.append(li);
+            textarea.append(ul);
+          };
+
+
+      };
+    };
 
 
     if (hour.isBefore(now, "hour")){
@@ -193,7 +276,7 @@ function renderSchedule(){
             localStorage.setItem("todoList", JSON.stringify(hourObject.todos))
             if (!todoMaster.includes(hourObject)){
               let storedMasters = JSON.parse(localStorage.getItem("masterList"));
-              if (storedTodos!==null){
+              if (storedMasters!==null){
                 todoMaster = storedMasters;
               };
               todoMaster.push(hourObject);
@@ -206,8 +289,8 @@ function renderSchedule(){
         });
       });
     }
-  };
-    }
+
+}
     
 
 // function buttonClick(event, )
