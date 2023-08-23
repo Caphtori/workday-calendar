@@ -1,7 +1,17 @@
+let containerEl = $("#container");
+
+let todoMaster = [];
+
+let dayStart = dayjs().hour(9).minute(0).second(0);
+let dayEnd = dayjs().hour(17).minute(0).second(0);
+let dayLength = dayEnd.diff(dayStart, "hour")+1;
+
+
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
 $(function () {
+  renderSchedule();
   // TODO: Add a listener for click events on the save button. This code should
   // use the id in the containing time-block as a key to save the user input in
   // local storage. HINT: What does `this` reference in the click listener
@@ -21,3 +31,59 @@ $(function () {
   //
   // TODO: Add code to display the current date in the header of the page.
 });
+
+
+
+function renderSchedule(){
+  for (let i=0; i<dayLength; i++){
+    let now = dayjs();
+    let hour = dayStart.add(i, "hour");
+    let hourLabel = hour.format('hA');
+
+    let hourObject = {
+      hour: hour,
+      todos: [],
+    };
+
+    let hourDiv = $("<div>");
+    let titleDiv = $("<div>");
+    let textarea = $("<textarea>");
+    let button = $("<button>");
+    let idiom = $("<i>");
+
+    if (hour.isBefore(now, "hour")){
+      hourDiv.addClass("row time-block past");
+    } else if (hour.isAfter(now, "hour")){
+      hourDiv.addClass("row time-block future");
+    } else{
+      hourDiv.addClass("row time-block present");
+    };
+
+    titleDiv.addClass("col-2 col-md-1 hour text-center py-3");
+    titleDiv.text(hourLabel);
+
+    textarea.addClass("col-8 col-md-10 description");
+    textarea.attr("rows", "3")
+    
+    button.addClass("btn saveBtn col-2 col-md-1");
+    button.attr("aria-label", "save")
+    
+    idiom.addClass("fas fa-save");
+    idiom.attr("aria-hidden", "true");
+    
+
+    button.append(idiom);
+    hourDiv.append(titleDiv);
+    hourDiv.append(textarea);
+    hourDiv.append(button);
+    containerEl.append(hourDiv);
+
+    // button.addEventListener("click", (event)=>{
+    //   element = event.taget;
+
+    // });
+  }
+};
+
+// function buttonClick(event, )
+
