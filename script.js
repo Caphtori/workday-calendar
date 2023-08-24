@@ -4,9 +4,7 @@ let todoMaster = [];
 let today = dayjs();
 let pageDay = today;
 
-let dayStart = dayjs().hour(9).minute(0).second(0);
-let dayEnd = dayjs().hour(17).minute(0).second(0);
-let dayLength = dayEnd.diff(dayStart, "hour")+1;
+
 
 
 // Wrap all code that interacts with the DOM in a call to jQuery to ensure that
@@ -37,13 +35,16 @@ $(function () {
 
 
 function renderSchedule(){
+  let dayStart = pageDay.hour(9).minute(0).second(0);
+  let dayEnd = pageDay.hour(17).minute(0).second(0);
+  let dayLength = dayEnd.diff(dayStart, "hour")+1;
   for (let i=0; i<dayLength; i++){
-    renderHour(i);
+    renderHour(i,dayStart);
   };
     }
 
 
-renderHour = function(iHour){
+function renderHour (iHour, start) {
   let now = dayjs();
 
   // FOR TESTING PURPOSES ONLY
@@ -51,22 +52,36 @@ renderHour = function(iHour){
   // 
 
 
-  let hour = dayStart.add(iHour, "hour");
-  console.log(hour.format("h"))
+  let hour = start.add(iHour, "hour");
   let hourLabel = hour.format('hA');
 
-  let storedTodos = JSON.parse(localStorage.getItem("todoList"))
+  let storedMasters = JSON.parse(localStorage.getItem("masterList"));
+  if (storedMasters!==null){
+    todoMaster = storedMasters;
+  };
+
+  // let storedTodos = JSON.parse(localStorage.getItem("todoList"))
 
   let hourObject = {
     hour: hour,
-    day: pageDay,
-    // index: todoMaster.length,
+    index: null,
     todos: [],
   };
 
-  if (storedTodos!==null){
-    hourObject.todos = storedTodos;
+  if (todoMaster.length>0){
+    for (let i=0; i<todoMaster.length; i++){
+      // .format("D hA")
+      if (dayjs(todoMaster[i].hour).isSame(hourObject.hour, "day")&&dayjs(todoMaster[i].hour).isSame(hourObject.hour, "hour")){
+        hourObject=todoMaster[i];
+        hourObject.hour=dayjs(hourObject.hour)
+      }
+    };
   };
+  console.log(hourObject.hour.format("hA"), hourObject.index+", "+hourObject.todos.length);
+
+  // if (storedTodos!==null){
+  //   hourObject.todos = storedTodos;
+  // };
 
   let hourDiv = $("<div>");
   let titleDiv = $("<div>");
@@ -91,20 +106,17 @@ renderHour = function(iHour){
 
   function renderTodos(){
     let ul = $("<ul>");
-    let n =0;
     // hourObject.todos.forEach(renderSingle(this));
     for (let i=0; i<hourObject.todos.length; i++){
       // console.log(hourObject.todos.title)
       if (hourObject.hour===hour){
-        n++
-        console.log(hourObject.hour.format("h")+", "+n)
+        console.log(hourObject.hour.format("hA")+", "+hourObject.index+", "+hourObject.todos.length)
         renderSingle(hourObject.todos[i]);
       }
       
     };
 
     function renderSingle (todo) {
-      // console.log(todo.index)
       let li = $("<li>");
       let todoEnd = $("<i>");
       let checkbox = $("<input>");
@@ -112,8 +124,6 @@ renderHour = function(iHour){
       let changeBox = $("<div>");
       let edit = $("<i>");
       let trash = $("<i>");
-      // let todoTitle = todo.title;
-      // console.log(todoTitle)
 
       li.addClass("todoLi");
       
@@ -177,9 +187,10 @@ renderHour = function(iHour){
           ul.append(li);
           textarea.append(ul);
         };
-
-        
     };
+    hourDiv.remove(textarea);
+    hourDiv.remove(button);
+    appendEls ()
   };
 
 
@@ -221,6 +232,8 @@ renderHour = function(iHour){
   
   idiom.addClass("fas fa-plus ariaEl");
   idiom.attr("aria-hidden", "true");
+
+
   
   if (hour.isAfter(now, "hour")||hour.isSame(now, "hour")){
     button.append(idiom);
@@ -230,9 +243,26 @@ renderHour = function(iHour){
     renderTodos();
   };
 
-  hourDiv.append(titleDiv);
-  hourDiv.append(textarea);
-  hourDiv.append(button);
+  function appendEls (){
+    hourDiv.append(titleDiv);
+    hourDiv.append(textarea);
+    hourDiv.append(button);
+    
+  }
+  
+  // if (hour.isAfter(now, "hour")||hour.isSame(now, "hour")){
+  //   button.append(idiom);
+  // }
+
+  // if (hourObject.todos.length>0){
+  //   renderTodos();
+  // };
+
+  // hourDiv.append(titleDiv);
+  // hourDiv.append(textarea);
+  // hourDiv.append(button);
+  // containerEl.append(hourDiv);
+  appendEls()
   containerEl.append(hourDiv);
   btnListen()
 
@@ -290,8 +320,6 @@ renderHour = function(iHour){
           };
         }
       };
-      // console.log(todoObject.title())
-      // console.log(todoObject.title)
 
       
       
@@ -305,16 +333,19 @@ renderHour = function(iHour){
       hourDiv.removeClass("writable");
       checkHour();
       if (todoObject.txt!==''&&todoObject.txt!==undefined){
+        
         hourObject.todos.push(todoObject);
-        localStorage.setItem("todoList", JSON.stringify(hourObject.todos))
+        
+        console.log(todoMaster.length);
+        // localStorage.setItem("todoList", JSON.stringify(hourObject.todos))
         if (!todoMaster.includes(hourObject)){
-          let storedMasters = JSON.parse(localStorage.getItem("masterList"));
-          if (storedMasters!==null){
-            todoMaster = storedMasters;
-          };
+          hourObject.index = todoMaster.length;
           todoMaster.push(hourObject);
-          localStorage.setItem("masterList", JSON.stringify(todoMaster));
+        } else {
+          
+          todoMaster.splice(hourObject.index, 1, hourObject)
         };
+        localStorage.setItem("masterList", JSON.stringify(todoMaster));
       };
       renderTodos();
       btnListen();
