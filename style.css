@@ -114,9 +114,18 @@ textarea {
   color: yellow;
 }
 
+
+/* Todo List */
 .todoLi{
   display: flex;
   flex-direction: row;
   justify-content: center;
   gap: 1rem;
+}
+
+.changeBox{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 }
