@@ -120,7 +120,17 @@ textarea {
   display: flex;
   flex-direction: row;
   justify-content: center;
+}
+
+.card{
+  background-color: inherit;
+  border: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   gap: 1rem;
+  align-self: start;
 }
 
 .changeBox{
@@ -128,4 +138,13 @@ textarea {
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+}
+/*  */
+
+.areaDiv{
+  min-height: 10vh;
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+
 }
