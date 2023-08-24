@@ -116,6 +116,12 @@ textarea {
 
 
 /* Todo List */
+.todoUl{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
 .todoLi{
   display: flex;
   flex-direction: row;

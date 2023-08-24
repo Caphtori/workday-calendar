@@ -48,7 +48,7 @@ function renderHour (iHour, start) {
   let now = dayjs();
 
   // FOR TESTING PURPOSES ONLY
-  now = dayjs().hour(13).minute(0).second(0);
+  // now = dayjs().hour(13).minute(0).second(0);
   // 
 
 
@@ -267,13 +267,17 @@ function renderHour (iHour, start) {
     renderTodos();
   };
 
+  
+  
   function appendEls (){
     hourDiv.append(titleDiv);
+    
     if (isWrite){
       hourDiv.append(textarea);
     } else {
       hourDiv.append(areaDiv);
     };
+    // hourDiv.append(textarea);
     hourDiv.append(button);
     
   }
@@ -315,6 +319,8 @@ function renderHour (iHour, start) {
     };
     hourDiv.addClass("writable");
     isWrite = true;
+    // hourDiv.remove(areaDiv);
+    hourDiv.html('');
     appendEls();
 
     button.one("click", saveDeletable);
@@ -362,7 +368,10 @@ function renderHour (iHour, start) {
 
       hourDiv.removeClass("writable");
       isWrite = false;
+      // hourDiv.remove(textarea);
+      hourDiv.html('');
       appendEls();
+      // renderSchedule();
       checkHour();
       if (todoObject.txt!==''&&todoObject.txt!==undefined){
         
