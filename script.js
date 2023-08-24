@@ -1,19 +1,4 @@
-let containerEl = $("#container");
-
-let todoMaster = [];
-let today = dayjs();
-let pageDay = today;
-
-let testN = 0;
-
-
-
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
-$(function () {
-  renderSchedule();
-  // TODO: Add a listener for click events on the save button. This code should
+// TODO: Add a listener for click events on the save button. This code should
   // use the id in the containing time-block as a key to save the user input in
   // local storage. HINT: What does `this` reference in the click listener
   // function? How can DOM traversal be used to get the "hour-x" id of the
@@ -31,6 +16,25 @@ $(function () {
   // attribute of each time-block be used to do this?
   //
   // TODO: Add code to display the current date in the header of the page.
+
+  
+
+let containerEl = $("#container");
+
+let todoMaster = [];
+let today = dayjs();
+let pageDay = today;
+
+let testN = 0;
+
+
+
+// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
+// the code isn't run until the browser has finished rendering all the elements
+// in the html.
+$(function () {
+  renderSchedule();
+  
 });
 
 
@@ -85,6 +89,7 @@ function renderHour (iHour, startDay, endDay) {
   let areaDiv = $("<div>");
   let titlearea = $("<input>");
   let titeLabel = $("<label>");
+  let titleWrapper = $("<div>");
   // let afterLabel = $("<label>");
   let titleLen = 0;
   let titleID = String("timeDiv-"+hour.format("hA"))
@@ -100,6 +105,8 @@ function renderHour (iHour, startDay, endDay) {
   titeLabel.addClass("titleLabel");
   titeLabel.attr("for", titleID);
   titeLabel.text("Title ("+titleLen+"/50 chars):");
+
+  titleWrapper.addClass("titleWrapper");
 
   // afterLabel.addClass("afterLabel");
   // afterLabel.attr("for", titleID);
@@ -135,6 +142,8 @@ function renderHour (iHour, startDay, endDay) {
   if (hour.isSame(now, "hour")){
     initHourcheck();
   };
+  titleWrapper.append(titeLabel);
+  titleWrapper.append(titlearea);
   appendEls();
   containerEl.append(hourDiv);
   btnListen();
@@ -334,6 +343,8 @@ function renderHour (iHour, startDay, endDay) {
     isWrite = true;
     // hourDiv.html('');
     areaDiv.html('');
+    areaDiv.append(titleWrapper);
+    titlearea.focus();
     areaDiv.append(textarea);
     areaDiv.addClass("focus");
     // appendEls();
