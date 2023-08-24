@@ -38,30 +38,28 @@ $(function () {
 function renderSchedule(){
   let dayStart = pageDay.hour(9).minute(0).second(0);
   let dayEnd = pageDay.hour(17).minute(0).second(0);
+
+  //FOR TESTING PURPOSES ONLY
+  dayEnd = pageDay.hour(23).minute(0).second(0);
+  // 
+
+
   let dayLength = dayEnd.diff(dayStart, "hour")+1;
   for (let i=0; i<dayLength; i++){
-    renderHour(i, dayStart);
+    renderHour(i, dayStart, dayEnd);
   };
     }
 
 
-function renderHour (iHour, start) {
+function renderHour (iHour, startDay, endDay) {
   let now = dayjs();
-
-  // FOR TESTING PURPOSES ONLY
-  // now = dayjs().hour(13).minute(0).second(0);
-  // 
-
-
-  let hour = start.add(iHour, "hour");
+  let hour = startDay.add(iHour, "hour");
   let hourLabel = hour.format('hA');
 
   let storedMasters = JSON.parse(localStorage.getItem("masterList"));
   if (storedMasters!==null){
     todoMaster = storedMasters;
   };
-
-  // let storedTodos = JSON.parse(localStorage.getItem("todoList"))
 
   let hourObject = {
     hour: hour,
@@ -79,22 +77,73 @@ function renderHour (iHour, start) {
     };
   };
 
-  // if (storedTodos!==null){
-  //   hourObject.todos = storedTodos;
-  // };
+
   let isWrite = false;
   let hourDiv = $("<div>");
-  let titleDiv = $("<div>");
+  
+  let timeDiv = $("<div>");
   let areaDiv = $("<div>");
+  let titlearea = $("<input>");
+  let titeLabel = $("<label>");
+  // let afterLabel = $("<label>");
+  let titleLen = 0;
+  let titleID = String("timeDiv-"+hour.format("hA"))
   let textarea = $("<textarea>");
   let button = $("<button>");
   let idiom = $("<i>");
+
+  titlearea.addClass("formcontrol-lg ph1 titlearea");
+  titlearea.attr("placeholder", "Required...");
+  titlearea.attr("id", titleID);
+  titlearea.attr("maxlength", "50");
+
+  titeLabel.addClass("titleLabel");
+  titeLabel.attr("for", titleID);
+  titeLabel.text("Title ("+titleLen+"/50 chars):");
+
+  // afterLabel.addClass("afterLabel");
+  // afterLabel.attr("for", titleID);
+
+  timeDiv.addClass("col-2 col-md-1 hour text-center py-3");
+  timeDiv.text(hourLabel);
+  if (hour.hour()===endDay.hour()){
+    timeDiv.addClass("bottomDiv")
+  };
+  
+
+  areaDiv.addClass("col-8 col-md-10 description areaDiv");
+  areaDiv.attr("rows", "3");
+
+  textarea.addClass("col-8 col-md-10 description ph1");
+  textarea.attr("rows", "3");
+  textarea.attr("placeholder", "Don't forget to set the time...");
+  
+  idiom.addClass("fas fa-plus ariaEl");
+  idiom.attr("aria-hidden", "true");
+
+
+  
+  if (hour.isAfter(now, "hour")||hour.isSame(now, "hour")){
+    button.append(idiom);
+  };
+
+  if (hourObject.todos.length>0){
+    renderTodos();
+  };
+
+  checkHour();
+  if (hour.isSame(now, "hour")){
+    initHourcheck();
+  };
+  appendEls();
+  containerEl.append(hourDiv);
+  btnListen();
 
   // Checks the hour every minute to make sure the schedule is correct.
   function initHourcheck(){
     let wait = (60-dayjs().second())*1000;
     setTimeout(checkHourInt, wait);
-  }
+  };
 
   function checkHourInt(){
     let chInterval = setInterval(()=>{
@@ -109,24 +158,33 @@ function renderHour (iHour, start) {
         console.log(hour.format("hA")+": I'm off.")
         clearInterval(chInterval);
         btnListen()
+        containerEl.html('');
         renderSchedule();
       }
 
     }, 60000);
     
   };
+  // 
 
-
+  // Checks the hour of the current slot v IRL time and renders elements accordingly.
   function checkHour(){
     if (hour.isBefore(now, "hour")){
-      hourDiv.attr("class", "row time-block past");
-    } else if (hour.isAfter(now, "hour")){
-      hourDiv.attr("class", "row time-block future");
+      hourDiv.addClass("row time-block past");
+      button.addClass("btn noBtn col-2 col-md-1");
     } else{
-      hourDiv.attr("class", "row time-block present");
+      if (hour.isAfter(now, "hour")){
+        hourDiv.addClass("row time-block future");
+      } else {
+        hourDiv.addClass("row time-block present");
+      }
+      button.addClass("btn addBtn col-2 col-md-1");
+      button.attr("aria-label", "plus")
     };
   };
+  // 
 
+  // Render Elements
   function renderTodos(){
     let ul = $("<ul>");
     for (let i=0; i<hourObject.todos.length; i++){
@@ -232,103 +290,23 @@ function renderHour (iHour, start) {
     // hourDiv.remove(button);
     appendEls ();
   };
-
-
-  if (hour.isBefore(now, "hour")){
-    hourDiv.addClass("row time-block past");
-    button.addClass("btn noBtn col-2 col-md-1");
-    // textarea.readOnly=true;
-    // textarea.attr("readonly", true)
-  } else{
-    if (hour.isAfter(now, "hour")){
-      hourDiv.addClass("row time-block future");
-    } else {
-      hourDiv.addClass("row time-block present");
-      
-    }
-    button.addClass("btn addBtn col-2 col-md-1");
-    button.attr("aria-label", "plus")
-  };
-
-
-
-
-
-  // Running Some Functions
-
-  if (hour.isSame(now, "hour")){
-    initHourcheck();
-  }
-  
-
-
-  // 
-
-  // textarea.attr("readonly", true);
-
-  titleDiv.addClass("col-2 col-md-1 hour text-center py-3");
-  titleDiv.text(hourLabel);
-
-  areaDiv.addClass("col-8 col-md-10 description areaDiv");
-  areaDiv.attr("rows", "3");
-
-  textarea.addClass("col-8 col-md-10 description");
-  textarea.attr("rows", "3");
-  
-  // if (hour.isBefore(now, "hour")){
-    
-  // } else {
-    
-  // }
-  
-  // button.attr("aria-label", "save")
-  
-  // idiom.addClass("fas fa-save");
-  
-  idiom.addClass("fas fa-plus ariaEl");
-  idiom.attr("aria-hidden", "true");
-
-
-  
-  if (hour.isAfter(now, "hour")||hour.isSame(now, "hour")){
-    button.append(idiom);
-  }
-
-  if (hourObject.todos.length>0){
-    renderTodos();
-  };
-
-  
   
   function appendEls (){
-    hourDiv.append(titleDiv);
+    hourDiv.append(timeDiv);
     
-    if (isWrite){
-      hourDiv.append(textarea);
-    } else {
-      hourDiv.append(areaDiv);
-    };
+    // if (isWrite){
+    //   hourDiv.append(textarea);
+    // } else {
+    //   hourDiv.append(areaDiv);
+    // };
     // hourDiv.append(textarea);
+    hourDiv.append(areaDiv);
     hourDiv.append(button);
     
   }
-  
-  // if (hour.isAfter(now, "hour")||hour.isSame(now, "hour")){
-  //   button.append(idiom);
-  // }
+  //
 
-  // if (hourObject.todos.length>0){
-  //   renderTodos();
-  // };
-
-  // hourDiv.append(titleDiv);
-  // hourDiv.append(textarea);
-  // hourDiv.append(button);
-  // containerEl.append(hourDiv);
-  appendEls()
-  containerEl.append(hourDiv);
-  btnListen()
-
+  // Event Listeners
   function btnListen(){
     if (hour.isAfter(now, "hour")||hour.isSame(now, "hour")){
       button.one("click", btnDeletable);
@@ -354,24 +332,23 @@ function renderHour (iHour, start) {
     };
     hourDiv.addClass("writable");
     isWrite = true;
-    // hourDiv.remove(areaDiv);
-    hourDiv.html('');
-    appendEls();
-    textarea.focus();
+    // hourDiv.html('');
+    areaDiv.html('');
+    areaDiv.append(textarea);
+    areaDiv.addClass("focus");
+    // appendEls();
+    // textarea.focus();
     button.one("click", saveDeletable);
 
-    function saveDeletable (){
-      // let word = '';
-      // let taInput = textarea.val();
+    function setTodoTime(){
+      now = dayjs;
+      if (hour.isSame(no, "hour")){
 
-      // if (taInputt.length>20){
-      //   for (let i=0; i<20; i++){
-      //     word+=taInput[i];
-      //   }
-      //   word = word.trimEnd()+"..."
-      // } else {
-      //   word = taInput.trimEnd();
-      // };
+      }
+    }
+
+
+    function saveDeletable (){
 
          
       let todoObject = {
@@ -379,17 +356,6 @@ function renderHour (iHour, start) {
         index: hourObject.todos.length,
         isDone: false,
         isFail: false,
-        // title: function() {
-        //   if (this.txt.length>20){
-        //     let word = '';
-        //     for (let i=0; i<20; i++){
-        //       word+=this.txt[i];
-        //     }
-        //     return word.trimEnd()+"..."
-        //   } else {
-        //     return this.txt.trimEnd();
-        //   };
-        // }
       };
 
       
@@ -399,14 +365,13 @@ function renderHour (iHour, start) {
       button.attr("aria-label", "plus");
       idiom.addClass("fa-plus").removeClass('fa-save');
       textarea.val(value);
-      // textarea.attr("readonly", true);
 
       hourDiv.removeClass("writable");
       isWrite = false;
-      // hourDiv.remove(textarea);
-      hourDiv.html('');
-      appendEls();
-      // renderSchedule();
+      areaDiv.html('');
+      areaDiv.removeClass("focus");
+      // hourDiv.html('');
+      // appendEls();
       checkHour();
       if (todoObject.txt!==''&&todoObject.txt!==undefined){
         
@@ -429,6 +394,9 @@ function renderHour (iHour, start) {
 
 
   };
+  //
+
+
 };
 
 
