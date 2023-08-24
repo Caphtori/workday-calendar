@@ -46,249 +46,288 @@ function renderSchedule(){
 renderHour = function(iHour){
   let now = dayjs();
 
-    // FOR TESTING PURPOSES ONLY
-    // now = dayjs().hour(13).minute(0).second(0);
-    // 
+  // FOR TESTING PURPOSES ONLY
+  now = dayjs().hour(13).minute(0).second(0);
+  // 
 
 
-    let hour = dayStart.add(iHour, "hour");
-    let hourLabel = hour.format('hA');
+  let hour = dayStart.add(iHour, "hour");
+  console.log(hour.format("h"))
+  let hourLabel = hour.format('hA');
 
-    let storedTodos = JSON.parse(localStorage.getItem("todoList"))
+  let storedTodos = JSON.parse(localStorage.getItem("todoList"))
 
-    let hourObject = {
-      hour: hour,
-      day: pageDay,
-      // index: todoMaster.length,
-      todos: [],
+  let hourObject = {
+    hour: hour,
+    day: pageDay,
+    // index: todoMaster.length,
+    todos: [],
+  };
+
+  if (storedTodos!==null){
+    hourObject.todos = storedTodos;
+  };
+
+  let hourDiv = $("<div>");
+  let titleDiv = $("<div>");
+  let textarea = $("<textarea>");
+  let button = $("<button>");
+  let idiom = $("<i>");
+
+  // Checks the hour every minute to make sure the schedule is correct.
+  function checkHourInt(){
+    setInterval(checkHour, 60000)
+  };
+
+  function checkHour(){
+    if (hour.isBefore(now, "hour")){
+      hourDiv.attr("class", "row time-block past");
+    } else if (hour.isAfter(now, "hour")){
+      hourDiv.attr("class", "row time-block future");
+    } else{
+      hourDiv.attr("class", "row time-block present");
+    };
+  };
+
+  function renderTodos(){
+    let ul = $("<ul>");
+    let n =0;
+    // hourObject.todos.forEach(renderSingle(this));
+    for (let i=0; i<hourObject.todos.length; i++){
+      // console.log(hourObject.todos.title)
+      if (hourObject.hour===hour){
+        n++
+        console.log(hourObject.hour.format("h")+", "+n)
+        renderSingle(hourObject.todos[i]);
+      }
+      
     };
 
-    if (storedTodos!==null){
-      hourObject.todos = storedTodos;
-    };
+    function renderSingle (todo) {
+      // console.log(todo.index)
+      let li = $("<li>");
+      let todoEnd = $("<i>");
+      let checkbox = $("<input>");
+      let title = $("<p>");
+      let changeBox = $("<div>");
+      let edit = $("<i>");
+      let trash = $("<i>");
+      // let todoTitle = todo.title;
+      // console.log(todoTitle)
 
-    let hourDiv = $("<div>");
-    let titleDiv = $("<div>");
-    let textarea = $("<textarea>");
-    let button = $("<button>");
-    let idiom = $("<i>");
+      li.addClass("todoLi");
+      
+      checkbox.addClass("form-check-input");
+      checkbox.attr("type", "checkbox");
 
-    // Checks the hour every minute to make sure the schedule is correct.
-    function checkHourInt(){
-      setInterval(checkHour, 60000)
-    };
+      // title.text(todo.title);
 
-    function checkHour(){
+      changeBox.addClass("changeBox");
+
+      edit.addClass("far fa-edit");
+      trash.addClass("fa fa-trash-o");
+
+
+      
       if (hour.isBefore(now, "hour")){
-        hourDiv.attr("class", "row time-block past");
-      } else if (hour.isAfter(now, "hour")){
-        hourDiv.attr("class", "row time-block future");
-      } else{
-        hourDiv.attr("class", "row time-block present");
-      };
-    };
-
-    function renderTodos(){
-      let ul = $("<ul>");
-      hourObject.todos.each(renderSingle(this))
-
-      renderSingle = function(todo) {
-        let li = $("<li>");
-        let todoEnd = $("<i>");
-        let checkbox = $("<input>");
-        let title = $("<p>");
-        let changeBox = $("<div>");
-        let edit = $("<i>");
-        let trash = $("<i>");
-        
-        checkbox.addClass("form-check-input");
-        checkbox.attr("type", "checkbox");
-
-
-        
-        if (hour.isBefore(now, "hour")){
-          if (todo.isDone){
-            todoEnd.addClass("fa fa-check");
-            li.addClass("success");
-          } else {
-            todoEnd.addClass("fa fa-close");
-            li.addClass("fail");
-          };
-          // REMOVE EVENTLISTENERS
+        if (todo.isDone){
+          todoEnd.addClass("fa fa-check");
+          li.addClass("success");
+        } else {
+          todoEnd.addClass("fa fa-close");
+          li.addClass("fail");
+        };
+        renderDone();
+      } else {
+        if (todo.isDone){
           renderDone();
         } else {
-          if (todo.isDone){
-            renderDone();
-          } else {
-            changeBox.append(edit);
-            changeBox.append(trash);
-            li.append(checkbox);
-            li.append(title);
-            li.append(changeBox);
-            ul.append(li);
-            textarea.append(ul);
-            
-            checkbox.one("change", checkBoxFn);
+          changeBox.append(edit);
+          changeBox.append(trash);
+          li.append(checkbox);
+          li.append(title);
+          li.append(changeBox);
+          ul.append(li);
+          textarea.append(ul);
+
+          edit.one("click", editDeletable);
+
+          function editDeletable(){
+            btnClick(todo.title);
           };
           
-          
-          }
-
-          // if (todo.isDone){
-          //   if (hour.isBefore(now, "hour")){
-          //     li.addClass("success");
-          //   };
-          //   todoEnd.addClass("fa fa-check");
-          //   renderDone();
-          // } else {
-          //   changeBox.append(edit);
-          //   changeBox.append(trash);
-          //   li.append(checkbox);
-          //   li.append(title);
-          //   li.append(changeBox);
-          //   ul.append(li);
-          //   textarea.append(ul);
-            
-          //   checkbox.one("change", checkBoxFn)
-          // }
-          checkBoxFn = function(){
-            todo.isDone = true;
-            renderSingle(todo);
-          }
-
-
-          renderDone = function(){
-            checkbox.off("change", checkBoxFn);
-            li.append(todoEnd);
-            li.append(title);
-            ul.append(li);
-            textarea.append(ul);
-          };
-
-
-      };
-    };
-
-
-    if (hour.isBefore(now, "hour")){
-      hourDiv.addClass("row time-block past");
-      button.addClass("btn noBtn col-2 col-md-1");
-      // textarea.readOnly=true;
-      // textarea.attr("readonly", true)
-    } else{
-      if (hour.isAfter(now, "hour")){
-        hourDiv.addClass("row time-block future");
-      } else {
-        hourDiv.addClass("row time-block present");
-        
-      }
-      button.addClass("btn addBtn col-2 col-md-1");
-      button.attr("aria-label", "plus")
-    };
-
-    checkHourInt();
-
-    textarea.attr("readonly", true);
-
-    titleDiv.addClass("col-2 col-md-1 hour text-center py-3");
-    titleDiv.text(hourLabel);
-
-    textarea.addClass("col-8 col-md-10 description");
-    textarea.attr("rows", "3")
-    
-    if (hour.isBefore(now, "hour")){
-      
-    } else {
-      
-    }
-    
-    // button.attr("aria-label", "save")
-    
-    // idiom.addClass("fas fa-save");
-    
-    idiom.addClass("fas fa-plus ariaEl");
-    idiom.attr("aria-hidden", "true");
-    
-    if (hour.isAfter(now, "hour")||hour.isSame(now, "hour")){
-      button.append(idiom);
-    }
-    hourDiv.append(titleDiv);
-    hourDiv.append(textarea);
-    hourDiv.append(button);
-    containerEl.append(hourDiv);
-    btnListen()
-
-    function btnListen(){
-      button.one("click", function () {
-        // element = event.taget;
-  
-  
-        button.addClass("saveBtn").removeClass("addBtn");
-        button.attr("aria-label", "save")
-        idiom.addClass("fa-save").removeClass("fa-plus");
-        textarea.html('');
-        textarea.attr("readonly", false);
-
-        if (hour.isAfter(now, "hour")){
-          hourDiv.removeClass("future");
-        } else if (hour.isSame(now, "hour")){
-          hourDiv.removeClass("present");
+          checkbox.one("change", checkBoxFn);
         };
-        hourDiv.addClass("writable");
-  
-        button.one("click", function () {
-          let todoObject = {
-            txt: textarea.val(),
-            index: hourObject.todos.length,
-            isDone: false,
-            isFail: false,
-            title: function() {
-              if (this.txt.length>20){
-                let word = '';
-                for (let i=0; i<20; i++){
-                  word+=this.txt[i];
-                }
-                return word.trimEnd()+"..."
-                // return this.txt.from(0, 19, 1).trimEnd()+"...";
-              } else {
-                return this.txt.trimEnd();
-            }
-            // title: () => {
-            //   console.log(this.txt)
-            //   if (this.txt.length>20){
-            //     return this.txt.from(0, 19, 1).trimEnd()+"...";
-            //   } else {
-            //     return this.txt.trimEnd();
-            //   }
-            }
-          };
-  
-          button.addClass("addBtn").removeClass('saveBtn');
-          button.attr("aria-label", "plus");
-          idiom.addClass("fa-plus").removeClass('fa-save');
-          textarea.val('');
-          textarea.attr("readonly", true);
+        
+        
+        };
 
-          hourDiv.removeClass("writable");
-          checkHour();
-          if (todoObject.txt!==''&&todoObject.txt!==undefined){
-            hourObject.todos.push(todoObject);
-            localStorage.setItem("todoList", JSON.stringify(hourObject.todos))
-            if (!todoMaster.includes(hourObject)){
-              let storedMasters = JSON.parse(localStorage.getItem("masterList"));
-              if (storedMasters!==null){
-                todoMaster = storedMasters;
-              };
-              todoMaster.push(hourObject);
-              localStorage.setItem("masterList", JSON.stringify(todoMaster));
-            };
-          }
-          
+        function checkBoxFn (){
+          todo.isDone = true;
+          renderSingle(todo);
+        };
 
-          btnListen();
-        });
-      });
+
+        function renderDone (){
+          // REMOVE EVENTLISTENERS
+          edit.off("click", editDeletable);
+          checkbox.off("change", checkBoxFn);
+          li.append(todoEnd);
+          li.append(title);
+          ul.append(li);
+          textarea.append(ul);
+        };
+
+        
+    };
+  };
+
+
+  if (hour.isBefore(now, "hour")){
+    hourDiv.addClass("row time-block past");
+    button.addClass("btn noBtn col-2 col-md-1");
+    // textarea.readOnly=true;
+    // textarea.attr("readonly", true)
+  } else{
+    if (hour.isAfter(now, "hour")){
+      hourDiv.addClass("row time-block future");
+    } else {
+      hourDiv.addClass("row time-block present");
+      
     }
+    button.addClass("btn addBtn col-2 col-md-1");
+    button.attr("aria-label", "plus")
+  };
+
+  checkHourInt();
+
+  textarea.attr("readonly", true);
+
+  titleDiv.addClass("col-2 col-md-1 hour text-center py-3");
+  titleDiv.text(hourLabel);
+
+  textarea.addClass("col-8 col-md-10 description");
+  textarea.attr("rows", "3");
+  
+  // if (hour.isBefore(now, "hour")){
+    
+  // } else {
+    
+  // }
+  
+  // button.attr("aria-label", "save")
+  
+  // idiom.addClass("fas fa-save");
+  
+  idiom.addClass("fas fa-plus ariaEl");
+  idiom.attr("aria-hidden", "true");
+  
+  if (hour.isAfter(now, "hour")||hour.isSame(now, "hour")){
+    button.append(idiom);
+  }
+
+  if (hourObject.todos.length>0){
+    renderTodos();
+  };
+
+  hourDiv.append(titleDiv);
+  hourDiv.append(textarea);
+  hourDiv.append(button);
+  containerEl.append(hourDiv);
+  btnListen()
+
+  function btnListen(){
+    button.one("click", btnDeletable);
+    function btnDeletable (){
+      btnClick('');
+    };
+  };
+
+  function btnClick (value) {
+    button.addClass("saveBtn").removeClass("addBtn");
+    button.attr("aria-label", "save")
+    idiom.addClass("fa-save").removeClass("fa-plus");
+    textarea.html('');
+    textarea.attr("readonly", false);
+
+    if (hour.isAfter(now, "hour")){
+      hourDiv.removeClass("future");
+    } else if (hour.isSame(now, "hour")){
+      hourDiv.removeClass("present");
+    };
+    hourDiv.addClass("writable");
+
+    button.one("click", saveDeletable);
+
+    function saveDeletable (){
+      // let word = '';
+      // let taInput = textarea.val();
+
+      // if (taInputt.length>20){
+      //   for (let i=0; i<20; i++){
+      //     word+=taInput[i];
+      //   }
+      //   word = word.trimEnd()+"..."
+      // } else {
+      //   word = taInput.trimEnd();
+      // };
+
+         
+      let todoObject = {
+        txt: textarea.val(),
+        index: hourObject.todos.length,
+        isDone: false,
+        isFail: false,
+        title: function() {
+          if (this.txt.length>20){
+            let word = '';
+            for (let i=0; i<20; i++){
+              word+=this.txt[i];
+            }
+            return word.trimEnd()+"..."
+          } else {
+            return this.txt.trimEnd();
+          };
+        }
+      };
+      // console.log(todoObject.title())
+      // console.log(todoObject.title)
+
+      
+      
+
+      button.addClass("addBtn").removeClass('saveBtn');
+      button.attr("aria-label", "plus");
+      idiom.addClass("fa-plus").removeClass('fa-save');
+      textarea.val(value);
+      textarea.attr("readonly", true);
+
+      hourDiv.removeClass("writable");
+      checkHour();
+      if (todoObject.txt!==''&&todoObject.txt!==undefined){
+        hourObject.todos.push(todoObject);
+        localStorage.setItem("todoList", JSON.stringify(hourObject.todos))
+        if (!todoMaster.includes(hourObject)){
+          let storedMasters = JSON.parse(localStorage.getItem("masterList"));
+          if (storedMasters!==null){
+            todoMaster = storedMasters;
+          };
+          todoMaster.push(hourObject);
+          localStorage.setItem("masterList", JSON.stringify(todoMaster));
+        };
+      };
+      renderTodos();
+      btnListen();
+      
+    
+    };
+
+
+  };
+};
+
+
+function deleteListeners(){
 
 }
     
