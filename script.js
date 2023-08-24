@@ -40,7 +40,7 @@ function renderSchedule(){
   let dayEnd = pageDay.hour(17).minute(0).second(0);
   let dayLength = dayEnd.diff(dayStart, "hour")+1;
   for (let i=0; i<dayLength; i++){
-    renderHour(i,dayStart);
+    renderHour(i, dayStart);
   };
     }
 
@@ -78,7 +78,6 @@ function renderHour (iHour, start) {
       }
     };
   };
-  console.log(hourObject.hour.format("hA"), hourObject.index+", "+hourObject.todos.length);
 
   // if (storedTodos!==null){
   //   hourObject.todos = storedTodos;
@@ -92,9 +91,16 @@ function renderHour (iHour, start) {
   let idiom = $("<i>");
 
   // Checks the hour every minute to make sure the schedule is correct.
+  function initHourcheck(){
+    let wait = (60-dayjs().second())*1000;
+    setTimeout(checkHourInt, wait);
+  }
+
   function checkHourInt(){
     let chInterval = setInterval(()=>{
+      now = dayjs();
       testN++;
+      console.log("Now: "+now.format("h:mm:ssA"))
       console.log(hour.format("hA")+" test: "+ testN);
       
       checkHour();
@@ -102,6 +108,8 @@ function renderHour (iHour, start) {
       if (hour.isBefore(now, "hour")){
         console.log(hour.format("hA")+": I'm off.")
         clearInterval(chInterval);
+        btnListen()
+        renderSchedule();
       }
 
     }, 60000);
@@ -111,7 +119,6 @@ function renderHour (iHour, start) {
 
   function checkHour(){
     if (hour.isBefore(now, "hour")){
-      btnListen()
       hourDiv.attr("class", "row time-block past");
     } else if (hour.isAfter(now, "hour")){
       hourDiv.attr("class", "row time-block future");
@@ -122,13 +129,7 @@ function renderHour (iHour, start) {
 
   function renderTodos(){
     let ul = $("<ul>");
-    // hourObject.todos.forEach(renderSingle(this));
     for (let i=0; i<hourObject.todos.length; i++){
-      // console.log(hourObject.todos.title)
-      // if (hourObject.hour===hour){
-      //   console.log(hourObject.hour.format("hA")+", "+hourObject.index+", "+hourObject.todos.length, "bub")
-      //   renderSingle(hourObject.todos[i]);
-      // }
       renderSingle(hourObject.todos[i]);
     };
 
@@ -255,8 +256,8 @@ function renderHour (iHour, start) {
 
   // Running Some Functions
 
-  if (hour.isAfter(now, "hour")||hour.isSame(now, "hour")){
-    checkHourInt();
+  if (hour.isSame(now, "hour")){
+    initHourcheck();
   }
   
 
@@ -410,8 +411,6 @@ function renderHour (iHour, start) {
       if (todoObject.txt!==''&&todoObject.txt!==undefined){
         
         hourObject.todos.push(todoObject);
-        
-        console.log(todoMaster.length);
         // localStorage.setItem("todoList", JSON.stringify(hourObject.todos))
         if (!todoMaster.includes(hourObject)){
           hourObject.index = todoMaster.length;
