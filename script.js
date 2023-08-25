@@ -18,14 +18,12 @@
   // TODO: Add code to display the current date in the header of the page.
 
   
-
+let headerEl = $("#header-div");
 let containerEl = $("#container");
 
 let todoMaster = [];
-let today = dayjs();
-let pageDay = today;
-
-let testN = 0;
+// let today = dayjs();
+let pageDay = dayjs();
 
 
 
@@ -33,11 +31,61 @@ let testN = 0;
 // the code isn't run until the browser has finished rendering all the elements
 // in the html.
 $(function () {
+  renderHeader()
   renderSchedule();
   
 });
 
+function renderHeader(){
+  let dateCard = $("<div>");
+  let dateTxt = $("<h3>");
+  let leftArrow = $("<i>");
+  let rightArrow = $("<i>");
+  let revert = $("<i>");
+  let calendar = $("<i>");
 
+
+  dateCard.addClass("dateCard")
+  leftArrow.addClass("fas fa-arrow-left customIcon arrowI");
+  rightArrow.addClass("fas fa-arrow-right customIcon arrowI");
+  revert.addClass("fa fa-refresh customIcon");
+  calendar.addClass("far fa-calendar-alt customIcon");
+
+
+  writeDate()
+
+  dateCard.append(revert);
+  dateCard.append(dateTxt);
+  dateCard.append(calendar);
+  headerEl.append(leftArrow);
+  headerEl.append(dateCard);
+  headerEl.append(rightArrow);
+
+  leftArrow.on("click", ()=>{
+    pageDay = pageDay.subtract(1, 'day');
+    containerEl.html('');
+    writeDate()
+    renderSchedule()
+  })
+
+  rightArrow.on("click", ()=>{
+    pageDay = pageDay.add(1, 'day');
+    containerEl.html('');
+    writeDate()
+    renderSchedule();
+  })
+
+  revert.on("click", ()=>{
+    pageDay=dayjs();
+    writeDate()
+    containerEl.html('');
+    renderSchedule();
+  })
+
+  function writeDate(){
+    dateTxt.text(pageDay.format("MMMM D, YYYY (ddd)"));
+  };
+}
 
 function renderSchedule(){
   let dayStart = pageDay.hour(9).minute(0).second(0);
@@ -75,7 +123,7 @@ function renderHour (iHour, startDay, endDay) {
   if (todoMaster.length>0){
     for (let i=0; i<todoMaster.length; i++){
       // .format("D hA")
-      if (dayjs(todoMaster[i].hour).isSame(hourObject.hour, "day")&&dayjs(todoMaster[i].hour).isSame(hourObject.hour, "hour")){
+      if (dayjs(todoMaster[i].hour).isSame(hourObject.hour, "year")&&dayjs(todoMaster[i].hour).isSame(hourObject.hour, "date")&&dayjs(todoMaster[i].hour).isSame(hourObject.hour, "hour")){
         hourObject=todoMaster[i];
         hourObject.hour=dayjs(hourObject.hour)
       }
@@ -124,6 +172,8 @@ function renderHour (iHour, startDay, endDay) {
   if (hour.hour()===endDay.hour()){
     timeDiv.addClass("bottomDiv")
   };
+
+  hourDiv.addClass("row time-block");
   
 
   areaDiv.addClass("col-8 col-md-10 description areaDiv");
@@ -140,12 +190,12 @@ function renderHour (iHour, startDay, endDay) {
   idiom.attr("aria-hidden", "true");
 
   closeBtn.addClass("btn btnCustom col-2 col-md-1 closeBtn");
-  closeIdiom.addClass("far fa-trash-alt ariaEl");
+  closeIdiom.addClass("fa fa-close ariaEl");
   closeIdiom.attr("aria-hidden", "true");
 
 
   
-  if (hour.isAfter(now, "hour")||hour.isSame(now, "hour")){
+  if (hour.isAfter(now)||hour.isSame(now, "hour")){
     button.append(idiom);
   };
 
@@ -176,14 +226,12 @@ function renderHour (iHour, startDay, endDay) {
     let chInterval = setInterval(()=>{
      
       now = dayjs();
-      testN++;
-      console.log("Now: "+now.format("h:mm:ssA"))
-      console.log(hour.format("hA")+" test: "+ testN);
+      // console.log("Now: "+now.format("h:mm:ssA"))
+      // console.log(hour.format("hA")+" test: "+ testN);
       
       checkHour();
 
       if (hour.isBefore(now, "hour")){
-        console.log(hour.format("hA")+": I'm off.")
         clearInterval(chInterval);
         btnListen()
         containerEl.html('');
@@ -199,13 +247,13 @@ function renderHour (iHour, startDay, endDay) {
   
   function checkHour(){
     if (hour.isBefore(now, "hour")){
-      hourDiv.addClass("row time-block past");
+      hourDiv.addClass("past").removeClass("present").removeClass("future").removeClass("present");
       button.addClass("noBtn");
     } else{
       if (hour.isAfter(now, "hour")){
-        hourDiv.addClass("row time-block future");
+        hourDiv.addClass("future").removeClass("past").removeClass("present");
       } else {
-        hourDiv.addClass("row time-block present");
+        hourDiv.addClass("present").removeClass("past").removeClass("future");
       }
       if (!isWrite){
         button.addClass("addBtn");
@@ -529,6 +577,32 @@ function renderHour (iHour, startDay, endDay) {
 function deleteListeners(){
 
 }
+
+
+function RenderWeekend(iHour, startDay, endDay){
+  let hour = startDay.add(iHour, "hour");
+  let hourLabel = hour.format('hA');
+
+  let hourDiv = $("<div>");
+  let timeDiv = $("<div>");
+  let areaDiv = $("<div>");
+  let falseBtn = $("<div>");
+  let h4 = $("<h4>");
+
+  hourDiv.addClass("row time-block past");
+
+  timeDiv.addClass("col-2 col-md-1 hour text-center py-3");
+  timeDiv.text(hourLabel);
+  if (hour.hour()===endDay.hour()){
+    timeDiv.addClass("bottomDiv")
+  };
+
+  falseBtn.addClass("btn btnCustom col-2 col-md-1 noBtn");
+
+  areaDiv.addClass("col-8 col-md-10 description areaDiv");
+  areaDiv.attr("rows", "3");
+
+};
     
 
 // function buttonClick(event, )
