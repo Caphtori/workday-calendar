@@ -60,13 +60,7 @@ textarea {
   color: black;
 }
 
-.saveBtn {
-  border-left: 1px solid black;
-  border-top-right-radius: 15px;
-  border-bottom-right-radius: 15px;
-  background-color: #C3B1E1;
-  color: white;
-}
+
 
 /* .saveBtn i:hover {
   font-size: 20px;
@@ -79,20 +73,28 @@ textarea {
 }
 
 
-.addBtn {
+.btnCustom{
   border-left: 1px solid black;
   border-top-right-radius: 15px;
   border-bottom-right-radius: 15px;
-  background-color: #06aed5;
   color: white;
 }
 
+.saveBtn {
+  background-color: #C3B1E1;
+}
+
+.addBtn {
+  background-color: #06aed5;
+  
+}
+
+.closeBtn{
+  background-color: #06aed5;
+}
+
 .noBtn {
-  border-left: 1px solid black;
-  border-top-right-radius: 15px;
-  border-bottom-right-radius: 15px;
-  background-color: #ff6961;
-  color: white;
+  background-color: rgb(44, 43, 43);
 }
 
 .noBtn:hover {
@@ -206,10 +208,11 @@ textarea {
 
 .titleLabel{
   font-weight: 900;
-  margin-right: .5rem;
-  min-width: 8rem;
+  margin-right: .25rem;
+  min-width: 8.5rem;
   padding: 0;
-}
+  white-space: nowrap
+};
 
 
 .container-custom{
@@ -229,4 +232,8 @@ textarea {
   padding-bottom: .25rem;
   width: 100%;
   border-left: 1px solid black;
+}
+
+.maxEx{
+  color: red;
 }

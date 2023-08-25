@@ -91,7 +91,7 @@ function renderHour (iHour, startDay, endDay) {
   let titeLabel = $("<label>");
   let titleWrapper = $("<div>");
   // let afterLabel = $("<label>");
-  let titleLen = 0;
+  
   let titleID = String("timeDiv-"+hour.format("hA"))
   let textarea = $("<textarea>");
   let button = $("<button>");
@@ -104,7 +104,7 @@ function renderHour (iHour, startDay, endDay) {
 
   titeLabel.addClass("titleLabel");
   titeLabel.attr("for", titleID);
-  titeLabel.text("Title ("+titleLen+"/50 chars):");
+  
 
   titleWrapper.addClass("titleWrapper");
 
@@ -177,17 +177,18 @@ function renderHour (iHour, startDay, endDay) {
   // 
 
   // Checks the hour of the current slot v IRL time and renders elements accordingly.
+  button.addClass("btn btnCustom col-2 col-md-1");
   function checkHour(){
     if (hour.isBefore(now, "hour")){
       hourDiv.addClass("row time-block past");
-      button.addClass("btn noBtn col-2 col-md-1");
+      button.addClass("noBtn");
     } else{
       if (hour.isAfter(now, "hour")){
         hourDiv.addClass("row time-block future");
       } else {
         hourDiv.addClass("row time-block present");
       }
-      button.addClass("btn addBtn col-2 col-md-1");
+      button.addClass("addBtn");
       button.attr("aria-label", "plus")
     };
   };
@@ -328,6 +329,8 @@ function renderHour (iHour, startDay, endDay) {
   };
 
   function btnClick (value) {
+    let titleLen = 0;
+    titeLabel.text("Title ("+titleLen+"/50 chars):");
     button.addClass("saveBtn").removeClass("addBtn");
     button.attr("aria-label", "save")
     idiom.addClass("fa-save").removeClass("fa-plus");
@@ -350,6 +353,26 @@ function renderHour (iHour, startDay, endDay) {
     // appendEls();
     // textarea.focus();
     button.one("click", saveDeletable);
+    titlearea.on("keydown", charCounter);
+
+    function charCounter(event){
+      if (titlearea.val().length<=50){
+        console.log("bub");
+        titleLen = titlearea.val().length;
+        titeLabel.text("Title ("+titleLen+"/50 chars):");
+      } else {
+        let key = event.keyCode || event.charCode;
+        
+        if ( key !== 8 && key !== 46 ){
+          titlearea.addClass("maxEx");
+          
+        };
+        titlearea.one("keyup", ()=>{
+          titlearea.removeClass("maxEx");
+        });
+        
+      }
+    }
 
     function setTodoTime(){
       now = dayjs;
