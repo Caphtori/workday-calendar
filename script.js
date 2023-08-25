@@ -83,14 +83,14 @@ function renderHeader(){
   //   })
     
   
-    $(function () {
-      console.log("bub")
-      $('#datepicker').datepicker({
-        // showOn: "hiddenButton",
-        changeMonth: true,
-        changeYear: true,
-      });
-    });
+    // $(function () {
+    //   console.log("bub")
+    //   $('#datepicker').datepicker({
+    //     // showOn: "hiddenButton",
+    //     changeMonth: true,
+    //     changeYear: true,
+    //   });
+    // });
 
   leftArrow.on("click", ()=>{
     pageDay = pageDay.subtract(1, 'day');
@@ -217,7 +217,8 @@ function renderHour (iHour, startDay, endDay) {
 
   textarea.addClass("col-8 col-md-10 description ph1");
   textarea.attr("rows", "3");
-  textarea.attr("placeholder", "Don't forget to set the time...");
+  // textarea.attr("placeholder", "Don't forget to set the time...");
+  textarea.attr("placeholder", "Body...");
 
 
   button.addClass("btn btnCustom col-2 col-md-1");
@@ -304,10 +305,10 @@ function renderHour (iHour, startDay, endDay) {
   function renderTodos(){
     let ul = $("<ul>");
     for (let i=0; i<hourObject.todos.length; i++){
-      renderSingle(hourObject.todos[i]);
+      renderSingle(hourObject.todos[i], hourObject);
     };
 
-    function renderSingle (todo) {
+    function renderSingle (todo, todoObj) {
       let li = $("<li>");
       // let card = $("<div>");
       let todoEnd = $("<i>");
@@ -365,7 +366,7 @@ function renderHour (iHour, startDay, endDay) {
           todoEnd.addClass("fa fa-check");
           renderDone();
         } else {
-          
+
           changeBox.append(openI);
           changeBox.append(trash);
           li.append(checkbox);
@@ -378,10 +379,12 @@ function renderHour (iHour, startDay, endDay) {
           openI.one("click", openIDeletable);
 
           function openIDeletable(){
-            btnClick(todo.title, todo.txt);
+            readMode(todo);
           };
           
           checkbox.one("change", checkBoxFn);
+
+          trash.one("click", deleteTodo);
         };
         
         
@@ -389,7 +392,35 @@ function renderHour (iHour, startDay, endDay) {
 
         function checkBoxFn (){
           todo.isDone = true;
-          renderSingle(todo);
+          console.log(todo.title+": "+todo);
+          todoMaster.splice(todoObj.index, 1, todoObj);
+          localStorage.setItem("masterList", JSON.stringify(todoMaster));
+          areaDiv.html('')
+          // renderSingle(todo);
+          renderTodos();
+        };
+
+        function deleteTodo(){
+          for (let i=0; i<todoObj.todos.length; i++){
+            // todos.splice(todo.index, 1);
+            if (todo.index===i){
+              todoObj.todos.splice(i, 1);
+            }
+          };
+          console.log(todo.title);
+
+          // if (todoObj.todos.length>0){
+          //   todoMaster.splice(todoObj.index, 1, todoObj);
+          // } else {
+          //   todoMaster.splice(todoObj.index, 1);
+          //   for (let i=0; i<todoMaster.length; i++){
+          //     todoMaster[i].index = i;
+          //   };
+          // };
+          
+          localStorage.setItem("masterList", JSON.stringify(todoMaster));
+          areaDiv.html('')
+          renderTodos();
         };
 
 
@@ -398,8 +429,11 @@ function renderHour (iHour, startDay, endDay) {
           // titlearea.off("keydown", charCounter);
           openI.off("click", openIDeletable);
           checkbox.off("change", checkBoxFn);
+
+          changeBox.append(openI);
           li.append(todoEnd);
           li.append(title);
+          li.append(changeBox);
           ul.append(li);
           areaDiv.append(ul);
         };
@@ -423,6 +457,36 @@ function renderHour (iHour, startDay, endDay) {
     
   }
   //
+
+  function readMode(todoVar){
+    // let titleLen = titlearea.val().length;
+    let titleLen = todoVar.title.length;
+
+    areaDiv.html('');
+
+    textarea.attr("readonly", true);
+    titlearea.attr("readonly", true);
+
+    titeLabel.text("Title ("+titleLen+"/50 chars):");
+    titlearea.val(todoVar.title);
+    
+    textarea.val(todoVar.txt);
+
+    button.addClass("RO");
+    button.attr("aria-label", "close");
+    idiom.addClass("fa fa-close").removeClass("fa-plus");
+    
+    hourDiv.addClass("writable").removeClass("past").removeClass("present").removeClass("future");
+    areaDiv.addClass("focus");
+    areaDiv.html('');
+    areaDiv.append(inputDiv);
+    // areaDiv.append(closeBtn);
+
+    // button.one(()=>{
+
+    // });
+  }
+
 
   // Event Listeners
   function btnListen(){
@@ -549,12 +613,12 @@ function renderHour (iHour, startDay, endDay) {
       });
     }
 
-    function setTodoTime(){
-      now = dayjs;
-      if (hour.isSame(no, "hour")){
+    // function setTodoTime(){
+    //   now = dayjs;
+    //   if (hour.isSame(no, "hour")){
 
-      }
-    }
+    //   }
+    // }
 
 
     function saveDeletable (){
@@ -607,13 +671,9 @@ function renderHour (iHour, startDay, endDay) {
   };
   //
 
-
 };
 
 
-function deleteListeners(){
-
-}
 
 
 function RenderWeekend(iHour, startDay, endDay){
