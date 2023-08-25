@@ -105,8 +105,20 @@ textarea {
   background-color: #ff6961;
 }
 
+.RO{
+  background-color: #ff6961;
+};
+
 .noBtn {
   background-color: rgb(44, 43, 43);
+}
+
+.noBtnMP{
+  background-color: rgb(44, 43, 43);
+}
+
+.noBtnMP .RO{
+  background-color: #ff6961;
 }
 
 .noBtn:hover, .nsBtn:hover {
@@ -124,7 +136,7 @@ textarea {
 }
 
 .success{
-  color: #77dd77;
+  color: #73d073;
 }
 
 .active:hover{
@@ -135,7 +147,7 @@ textarea {
 
 /* Todo List */
 .todoUl{
-  margin-top: .5rem;
+  margin-top: 1rem;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -240,6 +252,7 @@ textarea {
 
 .container-custom{
   padding-bottom: 2.5rem;
+  /* margin-bottom: 2.5rem; */
 }
 
 .bottomDiv{
