@@ -99,7 +99,12 @@ function renderSchedule(){
 
   let dayLength = dayEnd.diff(dayStart, "hour")+1;
   for (let i=0; i<dayLength; i++){
-    renderHour(i, dayStart, dayEnd);
+    if (pageDay.day()===0 || pageDay.day()===6){
+      RenderWeekend(i, dayStart, dayEnd);
+    } else {
+      renderHour(i, dayStart, dayEnd);
+    }
+    
   };
     }
 
@@ -278,7 +283,7 @@ function renderHour (iHour, startDay, endDay) {
       let checkbox = $("<input>");
       let title = $("<p>");
       let changeBox = $("<div>");
-      let edit = $("<i>");
+      let openI = $("<i>");
       let trash = $("<i>");
 
       // let todoTitle = function() {
@@ -309,7 +314,8 @@ function renderHour (iHour, startDay, endDay) {
 
       changeBox.addClass("changeBox");
 
-      edit.addClass("far fa-edit changeIcon");
+      // openI.addClass("far fa-edit changeIcon");
+      openI.addClass("fas fa-book-open changeIcon");
       trash.addClass("far fa-trash-alt changeIcon");
 
 
@@ -329,7 +335,7 @@ function renderHour (iHour, startDay, endDay) {
           renderDone();
         } else {
           
-          changeBox.append(edit);
+          changeBox.append(openI);
           changeBox.append(trash);
           li.append(checkbox);
           li.append(title);
@@ -338,9 +344,9 @@ function renderHour (iHour, startDay, endDay) {
           ul.append(li);
           areaDiv.append(ul);
 
-          edit.one("click", editDeletable);
+          openI.one("click", openIDeletable);
 
-          function editDeletable(){
+          function openIDeletable(){
             btnClick(todo.title, todo.txt);
           };
           
@@ -359,7 +365,7 @@ function renderHour (iHour, startDay, endDay) {
         function renderDone (){
           // REMOVE EVENTLISTENERS
           // titlearea.off("keydown", charCounter);
-          edit.off("click", editDeletable);
+          openI.off("click", openIDeletable);
           checkbox.off("change", checkBoxFn);
           li.append(todoEnd);
           li.append(title);
@@ -400,7 +406,7 @@ function renderHour (iHour, startDay, endDay) {
   };
 
 
-  // ADD IS EDIT BUTTON
+  // ADD IN EDIT BUTTON
   function btnClick (titleVal, value) {
     let titleLen = 0;
     let isSavable = false;
@@ -599,8 +605,19 @@ function RenderWeekend(iHour, startDay, endDay){
 
   falseBtn.addClass("btn btnCustom col-2 col-md-1 noBtn");
 
+  h4.text("Weekend");
+
   areaDiv.addClass("col-8 col-md-10 description areaDiv");
   areaDiv.attr("rows", "3");
+
+  areaDiv.append(h4);
+  hourDiv.append(timeDiv);
+  hourDiv.append(areaDiv);
+  hourDiv.append(falseBtn);
+
+  containerEl.append(hourDiv);
+
+  
 
 };
     
