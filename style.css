@@ -113,6 +113,14 @@ textarea {
   background-color: rgb(44, 43, 43);
 }
 
+.noBtnMP{
+  background-color: rgb(44, 43, 43);
+}
+
+.noBtnMP .RO{
+  background-color: #ff6961;
+}
+
 .noBtn:hover, .nsBtn:hover {
   outline: none;
   cursor: inherit;
