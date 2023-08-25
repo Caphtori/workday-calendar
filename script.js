@@ -43,6 +43,9 @@ function renderHeader(){
   let rightArrow = $("<i>");
   let revert = $("<i>");
   let calendar = $("<i>");
+  // let datePicker = $("<input>");
+  // let hiddenButton = $("<button>");
+  // let hiddenButton = $("<span>");
 
 
   dateCard.addClass("dateCard")
@@ -50,16 +53,44 @@ function renderHeader(){
   rightArrow.addClass("fas fa-arrow-right customIcon arrowI");
   revert.addClass("fa fa-refresh customIcon");
   calendar.addClass("far fa-calendar-alt customIcon");
+  calendar.attr("id", "datepicker");
+
+  // hiddenButton.addClass("hiddenButton");
+  // hiddenButton.attr("id", "datepicker");
+  // hiddenButton.attr("type", "button")
+
+  //
 
 
   writeDate()
 
+  // hiddenButton.append(calendar);
+
   dateCard.append(revert);
   dateCard.append(dateTxt);
   dateCard.append(calendar);
+  // dateCard.append(hiddenButton);
   headerEl.append(leftArrow);
   headerEl.append(dateCard);
   headerEl.append(rightArrow);
+
+  // calendar.on("click", (event)=>{
+  //     element = event.target;
+  //     element.datepicker({
+  //       changeMonth: true,
+  //       changeYear: true,
+  //     });
+  //   })
+    
+  
+    $(function () {
+      console.log("bub")
+      $('#datepicker').datepicker({
+        // showOn: "hiddenButton",
+        changeMonth: true,
+        changeYear: true,
+      });
+    });
 
   leftArrow.on("click", ()=>{
     pageDay = pageDay.subtract(1, 'day');
