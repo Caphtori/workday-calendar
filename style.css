@@ -234,7 +234,7 @@ textarea {
   margin-right: .25rem;
   min-width: 8.5rem;
   padding: 0;
-  white-space: nowrap
+  white-space: nowrap;
 };
 
 
@@ -259,4 +259,47 @@ textarea {
 
 .maxEx{
   color: red;
+}
+
+
+/* Header Div*/
+
+.headerDiv{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: end;
+  padding: 1rem;
+  font-size: 3rem;
+  gap: 3rem;
+}
+
+h3{
+  font-size: 3rem;
+}
+.dateCard{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  font-size: 2rem;
+}
+
+.customIcon:hover{
+  cursor: pointer;
+  color: gold;
+}
+
+.customIcon:active{
+  cursor: pointer;
+  color: inherit;
+}
+
+.arrowI{
+  margin-bottom: .5rem;
+}
+
+.weekend {
+  /* background-color: rgb(44, 43, 43); */
+  color: rgb(44, 43, 43);
 }
