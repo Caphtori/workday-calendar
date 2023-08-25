@@ -207,8 +207,11 @@ function renderHour (iHour, startDay, endDay) {
       } else {
         hourDiv.addClass("row time-block present");
       }
-      button.addClass("addBtn");
-      button.attr("aria-label", "plus")
+      if (!isWrite){
+        button.addClass("addBtn");
+        button.attr("aria-label", "plus")
+      }
+      
     };
   };
   //
@@ -348,13 +351,23 @@ function renderHour (iHour, startDay, endDay) {
     };
   };
 
+
+  // ADD IS EDIT BUTTON
   function btnClick (titleVal, value) {
     let titleLen = 0;
     let isSavable = false;
+    let saveSwitch = false;
+
+
+    titlearea.val(titleVal);
+    textarea.val(value);
+
+
+
     idiom.addClass("fa-save").removeClass("fa-plus");
     if (titlearea.val()!==''&&titlearea.val()!==null&&titlearea.val()!==undefined){
       isSavable = true;
-      button.addClass("saveBtn").removeClass("addBtn");
+      button.addClass("saveBtn").removeClass("addBtn").removeClass("nsBtn");
       idiom.addClass("nsAria").removeClass("ariaEl");
     } else {
       button.addClass("nsBtn").removeClass("addBtn");
@@ -382,11 +395,17 @@ function renderHour (iHour, startDay, endDay) {
     // areaDiv.append(textarea);
     areaDiv.addClass("focus");
 
+    function saveClick(){
+      if (isSavable){
+          button.one("click", saveDeletable);
+        };
+    };
+
+    saveClick();
+
 
     // MAYBE: Remove the charcounter on the button click (make the one function anonymous)
-    if (isSavable){
-      button.one("click", saveDeletable);
-    }
+    
     closeBtn.one("click", ()=>{
       // REMOVE EVENT LISTENERS
       button.addClass("addBtn").removeClass('saveBtn');
@@ -424,9 +443,23 @@ function renderHour (iHour, startDay, endDay) {
         let titleCheck = titlearea.val();
         if (titleCheck!==''&&titleCheck!==null&&titleCheck!==undefined){
           isSavable = true;
+
           // ADD BUTTON STUFF
           button.addClass("saveBtn").removeClass("nsBtn");
           idiom.addClass("ariaEl").removeClass("nsAria");
+          if (!saveSwitch){
+            saveClick()
+            saveSwitch=true;
+          }
+          
+          // btnClick();
+        } else {
+          button.addClass("nsBtn").removeClass("saveBtn");
+          saveSwitch=false;
+          if (saveSwitch){
+            saveClick()
+            saveSwitch=false;
+          }
         }
       });
     }
@@ -456,8 +489,8 @@ function renderHour (iHour, startDay, endDay) {
       button.addClass("addBtn").removeClass('saveBtn');
       button.attr("aria-label", "plus");
       idiom.addClass("fa-plus").removeClass('fa-save');
-      titlearea.val(titleVal);
-      textarea.val(value);
+      // titlearea.val(titleVal);
+      // textarea.val(value);
 
       hourDiv.removeClass("writable");
       isWrite = false;
