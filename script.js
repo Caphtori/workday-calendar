@@ -44,6 +44,7 @@ function renderSchedule(){
   let dayEnd = pageDay.hour(17).minute(0).second(0);
 
   //FOR TESTING PURPOSES ONLY
+  dayStart = pageDay.hour(0).minute(0).second(0);
   dayEnd = pageDay.hour(23).minute(0).second(0);
   // 
 
@@ -85,11 +86,16 @@ function renderHour (iHour, startDay, endDay) {
   let isWrite = false;
   let hourDiv = $("<div>");
   
+  let inputDiv = $("<div>");
+
   let timeDiv = $("<div>");
   let areaDiv = $("<div>");
   let titlearea = $("<input>");
   let titeLabel = $("<label>");
   let titleWrapper = $("<div>");
+
+  let closeBtn = $("<button>");
+  let closeIdiom = $("<i>");
   // let afterLabel = $("<label>");
   
   let titleID = String("timeDiv-"+hour.format("hA"))
@@ -105,6 +111,8 @@ function renderHour (iHour, startDay, endDay) {
   titeLabel.addClass("titleLabel");
   titeLabel.attr("for", titleID);
   
+
+  inputDiv.addClass("inputDiv");
 
   titleWrapper.addClass("titleWrapper");
 
@@ -124,9 +132,16 @@ function renderHour (iHour, startDay, endDay) {
   textarea.addClass("col-8 col-md-10 description ph1");
   textarea.attr("rows", "3");
   textarea.attr("placeholder", "Don't forget to set the time...");
+
+
+  button.addClass("btn btnCustom col-2 col-md-1");
   
   idiom.addClass("fas fa-plus ariaEl");
   idiom.attr("aria-hidden", "true");
+
+  closeBtn.addClass("btn btnCustom col-2 col-md-1 closeBtn");
+  closeIdiom.addClass("far fa-trash-alt ariaEl");
+  closeIdiom.attr("aria-hidden", "true");
 
 
   
@@ -142,8 +157,11 @@ function renderHour (iHour, startDay, endDay) {
   if (hour.isSame(now, "hour")){
     initHourcheck();
   };
+  closeBtn.append(closeIdiom)
   titleWrapper.append(titeLabel);
   titleWrapper.append(titlearea);
+  inputDiv.append(titleWrapper);
+  inputDiv.append(textarea);
   appendEls();
   containerEl.append(hourDiv);
   btnListen();
@@ -156,6 +174,7 @@ function renderHour (iHour, startDay, endDay) {
 
   function checkHourInt(){
     let chInterval = setInterval(()=>{
+     
       now = dayjs();
       testN++;
       console.log("Now: "+now.format("h:mm:ssA"))
@@ -177,7 +196,7 @@ function renderHour (iHour, startDay, endDay) {
   // 
 
   // Checks the hour of the current slot v IRL time and renders elements accordingly.
-  button.addClass("btn btnCustom col-2 col-md-1");
+  
   function checkHour(){
     if (hour.isBefore(now, "hour")){
       hourDiv.addClass("row time-block past");
@@ -192,7 +211,7 @@ function renderHour (iHour, startDay, endDay) {
       button.attr("aria-label", "plus")
     };
   };
-  // 
+  //
 
   // Render Elements
   function renderTodos(){
@@ -211,17 +230,17 @@ function renderHour (iHour, startDay, endDay) {
       let edit = $("<i>");
       let trash = $("<i>");
 
-      let todoTitle = function() {
-        if (todo.txt.length>20){
-          let word = '';
-          for (let i=0; i<20; i++){
-            word+=todo.txt[i];
-          }
-          return word.trimEnd()+"..."
-        } else {
-          return todo.txt.trimEnd();
-        };
-      }
+      // let todoTitle = function() {
+      //   if (todo.txt.length>20){
+      //     let word = '';
+      //     for (let i=0; i<20; i++){
+      //       word+=todo.txt[i];
+      //     }
+      //     return word.trimEnd()+"..."
+      //   } else {
+      //     return todo.txt.trimEnd();
+      //   };
+      // }
 
       ul.addClass("todoUl");
 
@@ -235,7 +254,7 @@ function renderHour (iHour, startDay, endDay) {
       checkbox.attr("type", "checkbox");
 
       // title.text(todo.title);
-      title.text(todoTitle);
+      title.text(todo.title);
 
       changeBox.addClass("changeBox");
 
@@ -271,7 +290,7 @@ function renderHour (iHour, startDay, endDay) {
           edit.one("click", editDeletable);
 
           function editDeletable(){
-            btnClick(todo.title);
+            btnClick(todo.title, todo.txt);
           };
           
           checkbox.one("change", checkBoxFn);
@@ -288,6 +307,7 @@ function renderHour (iHour, startDay, endDay) {
 
         function renderDone (){
           // REMOVE EVENTLISTENERS
+          // titlearea.off("keydown", charCounter);
           edit.off("click", editDeletable);
           checkbox.off("change", checkBoxFn);
           li.append(todoEnd);
@@ -321,19 +341,28 @@ function renderHour (iHour, startDay, endDay) {
     if (hour.isAfter(now, "hour")||hour.isSame(now, "hour")){
       button.one("click", btnDeletable);
       function btnDeletable (){
-        btnClick('');
+        btnClick('', '');
       };
     } else {
       button.off("click", btnDeletable);
     };
   };
 
-  function btnClick (value) {
+  function btnClick (titleVal, value) {
     let titleLen = 0;
-    titeLabel.text("Title ("+titleLen+"/50 chars):");
-    button.addClass("saveBtn").removeClass("addBtn");
-    button.attr("aria-label", "save")
+    let isSavable = false;
     idiom.addClass("fa-save").removeClass("fa-plus");
+    if (titlearea.val()!==''&&titlearea.val()!==null&&titlearea.val()!==undefined){
+      isSavable = true;
+      button.addClass("saveBtn").removeClass("addBtn");
+      idiom.addClass("nsAria").removeClass("ariaEl");
+    } else {
+      button.addClass("nsBtn").removeClass("addBtn");
+    }
+    titeLabel.text("Title ("+titleLen+"/50 chars):");
+    
+    button.attr("aria-label", "save")
+    
     areaDiv.html('');
     // textarea.attr("readonly", false);
 
@@ -346,18 +375,37 @@ function renderHour (iHour, startDay, endDay) {
     isWrite = true;
     // hourDiv.html('');
     areaDiv.html('');
-    areaDiv.append(titleWrapper);
+    areaDiv.append(inputDiv);
+    areaDiv.append(closeBtn);
+    // areaDiv.append(titleWrapper);
     titlearea.focus();
-    areaDiv.append(textarea);
+    // areaDiv.append(textarea);
     areaDiv.addClass("focus");
-    // appendEls();
-    // textarea.focus();
-    button.one("click", saveDeletable);
+
+
+    // MAYBE: Remove the charcounter on the button click (make the one function anonymous)
+    if (isSavable){
+      button.one("click", saveDeletable);
+    }
+    closeBtn.one("click", ()=>{
+      // REMOVE EVENT LISTENERS
+      button.addClass("addBtn").removeClass('saveBtn');
+      button.attr("aria-label", "plus");
+      idiom.addClass("fa-plus").removeClass('fa-save');
+      button.off("click", saveDeletable);
+      titlearea.off("keydown", charCounter);
+      hourDiv.removeClass("writable");
+      isWrite = false;
+      areaDiv.html('');
+      areaDiv.removeClass("focus");
+      checkHour();
+      renderTodos();
+      btnListen();
+    });
     titlearea.on("keydown", charCounter);
 
     function charCounter(event){
       if (titlearea.val().length<=50){
-        console.log("bub");
         titleLen = titlearea.val().length;
         titeLabel.text("Title ("+titleLen+"/50 chars):");
       } else {
@@ -372,6 +420,15 @@ function renderHour (iHour, startDay, endDay) {
         });
         
       }
+      titlearea.one("keyup", ()=>{
+        let titleCheck = titlearea.val();
+        if (titleCheck!==''&&titleCheck!==null&&titleCheck!==undefined){
+          isSavable = true;
+          // ADD BUTTON STUFF
+          button.addClass("saveBtn").removeClass("nsBtn");
+          idiom.addClass("ariaEl").removeClass("nsAria");
+        }
+      });
     }
 
     function setTodoTime(){
@@ -390,6 +447,7 @@ function renderHour (iHour, startDay, endDay) {
         index: hourObject.todos.length,
         isDone: false,
         isFail: false,
+        title: titlearea.val(),
       };
 
       
@@ -398,6 +456,7 @@ function renderHour (iHour, startDay, endDay) {
       button.addClass("addBtn").removeClass('saveBtn');
       button.attr("aria-label", "plus");
       idiom.addClass("fa-plus").removeClass('fa-save');
+      titlearea.val(titleVal);
       textarea.val(value);
 
       hourDiv.removeClass("writable");
@@ -407,25 +466,25 @@ function renderHour (iHour, startDay, endDay) {
       // hourDiv.html('');
       // appendEls();
       checkHour();
-      if (todoObject.txt!==''&&todoObject.txt!==undefined){
+      // if (todoObject.txt!==''&&todoObject.txt!==undefined){
         
-        hourObject.todos.push(todoObject);
+      hourObject.todos.push(todoObject);
         // localStorage.setItem("todoList", JSON.stringify(hourObject.todos))
-        if (!todoMaster.includes(hourObject)){
-          hourObject.index = todoMaster.length;
-          todoMaster.push(hourObject);
-        } else {
-          
-          todoMaster.splice(hourObject.index, 1, hourObject)
-        };
-        localStorage.setItem("masterList", JSON.stringify(todoMaster));
+      if (!todoMaster.includes(hourObject)){
+        hourObject.index = todoMaster.length;
+        todoMaster.push(hourObject);
+      } else {
+        
+        todoMaster.splice(hourObject.index, 1, hourObject)
       };
+      localStorage.setItem("masterList", JSON.stringify(todoMaster));
+      // };
       renderTodos();
       btnListen();
       
     
     };
-
+    
 
   };
   //

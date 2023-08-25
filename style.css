@@ -67,9 +67,14 @@ textarea {
   transition: all 0.3s ease-in-out;
 } */
 
-.areaEl:hover {
+.ariaEl:hover {
   font-size: 20px;
   transition: all 0.3s ease-in-out;
+}
+
+.nsAria:hover{
+  font-size: 1rem;
+  transition: none;
 }
 
 
@@ -81,7 +86,13 @@ textarea {
 }
 
 .saveBtn {
-  background-color: #C3B1E1;
+  border-left: none;
+  background-color: #77dd77;
+}
+
+.nsBtn{
+  border-left: none;
+  background-color: #d3d3d3;
 }
 
 .addBtn {
@@ -90,18 +101,22 @@ textarea {
 }
 
 .closeBtn{
-  background-color: #06aed5;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+  background-color: #ff6961;
 }
 
 .noBtn {
   background-color: rgb(44, 43, 43);
 }
 
-.noBtn:hover {
+.noBtn:hover, .nsBtn:hover {
+  outline: none;
   cursor: inherit;
 }
 
-.noBtn:focus {
+.noBtn:focus, .nsBtn:hover {
+  outline: none;
   box-shadow: inherit;
 }
 
@@ -176,12 +191,21 @@ textarea {
 }
 /*  */
 
+
+.inputDiv{
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
 .areaDiv{
   padding: 0;
   min-height: 10vh;
   display: flex;
-  flex-direction: column;
-  align-items: start;
+  flex-direction: row;
+  justify-content: space-between;
+  /* flex-direction: column;
+  align-items: start; */
 }
 
 .focus{
