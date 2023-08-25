@@ -9,7 +9,6 @@ textarea {
   resize: none;
   color: #000000;
   border-left: 1px solid black;
-  /* padding: 10px; */
   padding: .625rem;
   padding-top: .25rem;
 }
@@ -59,13 +58,6 @@ textarea {
   background-color: white;
   color: black;
 }
-
-
-
-/* .saveBtn i:hover {
-  font-size: 20px;
-  transition: all 0.3s ease-in-out;
-} */
 
 .ariaEl:hover {
   font-size: 20px;
@@ -166,17 +158,6 @@ textarea {
   cursor: pointer;
 }
 
-/* .card{
-  background-color: inherit;
-  border: none;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  gap: 1rem;
-  align-self: start;
-} */
-
 .changeBox{
   display: flex;
   flex-direction: row;
@@ -215,8 +196,6 @@ textarea {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  /* flex-direction: column;
-  align-items: start; */
 }
 
 .focus{
@@ -252,7 +231,6 @@ textarea {
 
 .container-custom{
   padding-bottom: 2.5rem;
-  /* margin-bottom: 2.5rem; */
 }
 
 .bottomDiv{
@@ -313,7 +291,6 @@ h3{
 }
 
 .weekend {
-  /* background-color: rgb(44, 43, 43); */
   color: rgb(44, 43, 43);
 }
 
@@ -324,3 +301,17 @@ h4{
   margin-top: 1rem;
   margin-left: 1rem;
 }
+
+.dateCardCont{
+  display: flex;
+  flex-direction: column;
+}
+
+.calendarCard{
+  display: flex;
+  flex-direction: row;
+}
+
+/* .NV{
+  display: none;
+} */
