@@ -10,4 +10,4 @@ https://caphtori.github.io/workday-schedule/
 
 ## Screenshots
 
-![Image](https://caphtori.github.io/workday-schedule/)
+![Image](./site-screenshot.png)
